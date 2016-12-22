@@ -107,8 +107,15 @@ def fill_the_db(testapp):
         dbsession.add_all(ENTRIES)
 
 
+def test_create_view_has_form(testapp):
+    """Test that the edit view has a form on it."""
+    response = testapp.get('/journal/new-entry', status=200)
+    html = response.html
+    assert len(html.find_all("form")) == 1
+
+
 def test_edit_view_has_form(testapp):
     """Test that the edit view has a form on it."""
-    response = testapp.get('/journal/2/edit', status=200)
+    response = testapp.get('/journal/3/edit-entry', status=200)
     html = response.html
     assert len(html.find_all("form")) == 1
