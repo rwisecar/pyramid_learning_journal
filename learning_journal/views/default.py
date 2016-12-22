@@ -16,17 +16,6 @@ def my_view(request):
     return {'entries': entries, 'project': 'learning_journal'}
 
 
-@view_config(route_name='create', renderer='../templates/create.jinja2')
-def create_view(request):
-    if request.method == "POST":
-        new_title = request.POST["title"]
-        new_post = request.POST["post"]
-        new_model = Entry(title=new_title, body=new_post)
-        request.dbsession.add(new_model)
-        return {"data": {"title": "post"}}
-    return {"data": {"title": "post"}}
-
-
 @view_config(route_name='detail', renderer='../templates/detail.jinja2')
 def detail_view(request):
     try:
@@ -38,8 +27,8 @@ def detail_view(request):
     return {'entry': entry, 'project': 'learning_journal'}
 
 
-@view_config(route_name='edit', renderer='../templates/edit.jinja2')
-def edit_view(request):
+@view_config(route_name='create', renderer='../templates/create.jinja2')
+def create_view(request):
     if request.method == "POST":
         new_title = request.POST["title"]
         new_post = request.POST["post"]
@@ -47,6 +36,24 @@ def edit_view(request):
         request.dbsession.add(new_model)
         return {"data": {"title": "post"}}
     return {"data": {"title": "post"}}
+
+
+@view_config(route_name='edit', renderer='../templates/edit.jinja2')
+def edit_view(request):
+    try:
+        query = request.dbsession.query(Entry)
+        the_id = int(request.matchdict["id"])
+        entry = query.all()[the_id]
+        if request.method == "POST":
+            new_title = request.POST["title"]
+            new_post = request.POST["post"]
+            new_model = Entry(title=new_title, body=new_post)
+            request.dbsession.add(new_model)
+        return {'entry': entry, 'project': 'learning_journal', "data": {"title": "post"}}
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    return {'entry': entry, 'project': 'learning_journal', "data": {"title": "post"}}
+
 
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
