@@ -12,3 +12,6 @@ Getting Started
 
 - $VENV/bin/pserve development.ini
 
+This is blog app made using Pyramid and SQLAlchemy, which will hold learning journal entries.
+
+It is deployed on Heroku at: https://pyramid-blog.herokuapp.com/
