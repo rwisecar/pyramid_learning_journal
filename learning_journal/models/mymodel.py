@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import (
     Column,
-    DateTime,
+    Date,
     Index,
     Integer,
     Unicode,
@@ -15,7 +15,7 @@ class Entry(Base):
     __tablename__ = 'entries'
     id = Column(Integer, primary_key=True)
     title = Column(Unicode)
-    # creation_date = Column(DateTime, default=datetime.date)
+    creation_date = Column(Date)
     body = Column(Unicode)
 
 

@@ -4,6 +4,7 @@ from pyramid.view import view_config
 from sqlalchemy.exc import DBAPIError
 
 from ..models import Entry
+import datetime
 
 
 @view_config(route_name='list', renderer='../templates/list.jinja2')
@@ -32,10 +33,11 @@ def create_view(request):
     if request.method == "POST":
         new_title = request.POST["title"]
         new_post = request.POST["post"]
-        new_model = Entry(title=new_title, body=new_post)
+        new_date = datetime.datetime.now()
+        new_model = Entry(title=new_title, body=new_post, creation_date=new_date)
         request.dbsession.add(new_model)
-        return {"data": {"title": "post"}}
-    return {"data": {"title": "post"}}
+        return {"data": {"title": "post"}, "creation_date": "creation_date"}
+    return {"data": {"title": "post"}, "creation_date": "creation_date"}
 
 
 @view_config(route_name='edit', renderer='../templates/edit.jinja2')
@@ -47,9 +49,10 @@ def edit_view(request):
         if request.method == "POST":
             new_title = request.POST["title"]
             new_post = request.POST["post"]
-            new_model = Entry(title=new_title, body=new_post)
+            new_date = datetime.datetime.now()
+            new_model = Entry(title=new_title, body=new_post, creation_date=new_date)
             request.dbsession.add(new_model)
-        return {'entry': entry, 'project': 'learning_journal', "data": {"title": "post"}}
+        return {'entry': entry, 'project': 'learning_journal', "data": {"title": "post"}, "creation_date": "creation_date"}
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
     return {'entry': entry, 'project': 'learning_journal', "data": {"title": "post"}}

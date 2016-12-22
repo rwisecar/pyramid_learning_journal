@@ -9,6 +9,7 @@
                     {% for entry in entries %}
                         <li>
                             <h3><a href={{ request.route_url('detail', id=entry.id - 1) }}>{{ entry.title }}</a></h3>
+                            <h4>Created on: {{ entry.creation_date }}</h4>
                             <p>{{ entry.body| truncate(500) }}</p>
                         </li>
                     {% endfor %}
