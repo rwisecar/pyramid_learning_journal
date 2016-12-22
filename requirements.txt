@@ -11,7 +11,7 @@ enum34==1.1.6
 ipython==5.1.0
 ipython-genutils==0.1.0
 Jinja2==2.8
--e git+https://github.com/rwisecar/pyramid_learning_journal.git@1870b10a60ccb062f55170977b33b1874232f10b#egg=learning_journal
+-e git+https://github.com/rwisecar/pyramid_learning_journal.git@ae9a6b81f4194f4590e7e07945f28578d00320ae#egg=learning_journal
 -e git+https://github.com/rwisecar/learning_journal_basic.git@9cb355f10cacd705e7b09a64ad1773a38c303d31#egg=learning_journal_basic
 Mako==1.0.6
 MarkupSafe==0.23
