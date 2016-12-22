@@ -38,12 +38,12 @@ def db_session(configuration, request):
 @pytest.fixture
 def dummy_request(db_session):
     """Set up a dummy request object by instantiating DummyRequest class."""
-    return testing.DummyRequest(db_session=db_session)
+    return testing.DummyRequest(dbsession=db_session)
 
 
 @pytest.fixture
 def add_dummy_model(dummy_request):
-    dummy_request.dbsession.add_all(ENTRIES)
+    return dummy_request.dbsession.add_all(ENTRIES)
 
 
 @pytest.fixture
@@ -66,15 +66,49 @@ ENTRIES = [Entry(
 
 
 # =========== UNIT TESTS =========== #
-
+"""Testing that model is creating Entry class objects and pushing to db."""
 def test_new_entries_are_added(db_session):
     """Test that new entries are added to the database."""
     db_session.add_all(ENTRIES)
     query = db_session.query(Entry).all()
     assert len(query) == len(ENTRIES)
 
-def test_list_view_returns_empty_when_empty(dummy_request, add_dummy_model):
-    """Test that list view has no data when db is empty."""
+
+def test_list_view_returns_correct_number_of_entries(dummy_request, add_dummy_model):
+    """Test that list view has db entries on it."""
     from ..views.default import my_view
     result = my_view(dummy_request)
-    assert len(result["entries"]) == 0
+    assert len(result["entries"]) == 5
+
+# =========== FUNCTIONAL TESTS =========== #
+
+@pytest.fixture
+def testapp():
+    """Create a session."""
+    from webtest import TestApp
+    from learning_journal import main
+
+    app = main({}, **{"sqlalchemy.url": 'sqlite:///:memory:'})
+    testapp = TestApp(app)
+
+    SessionFactory = app.registry["dbsession_factory"]
+    engine = SessionFactory().bind
+    Base.metadata.create_all(bind=engine)
+
+    return testapp
+
+
+@pytest.fixture
+def fill_the_db(testapp):
+    """Fill the session DB with the ENTRIES created above."""
+    SessionFactory = testapp.app.registry["dbsession_factory"]
+    with transaction.manager:
+        dbsession = get_tm_session(SessionFactory, transaction.manager)
+        dbsession.add_all(ENTRIES)
+
+
+def test_edit_view_has_form(testapp):
+    """Test that the edit view has a form on it."""
+    response = testapp.get('/journal/2/edit', status=200)
+    html = response.html
+    assert len(html.find_all("form")) == 1
