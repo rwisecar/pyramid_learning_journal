@@ -8,7 +8,7 @@
                         <label for="title">Title</label>
                         <br>
                         <br>
-                        <input type=text, name="title" value={{ entry.title }} required/>
+                        <input type=text, name="title" value="{{ entry.title }}" required/>
                     </p>
                     <br>
                     <br>
@@ -16,7 +16,8 @@
                         <label for="value">Post</label>
                         <br>
                         <br>
-                        <textarea name="post" class="blogpost" value={{ entry.body }} cols="80" rows="20"></textarea>
+                        <textarea rows="20" cols="80" name="body" class="blogpost">{{ entry.body }}
+                        </textarea>
                         <br>
                         <br>
                         <input class="btn" type="submit" value="Submit">

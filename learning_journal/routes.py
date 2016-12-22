@@ -8,3 +8,5 @@ def includeme(config):
     config.add_route("create", "/journal/new-entry")
     config.add_route("detail", "/journal/{id:\d+}")
     config.add_route("edit", "/journal/{id:\d+}/edit-entry")
+    config.add_route("about", "/about")
+    config.add_route("portfolio", "/portfolio")

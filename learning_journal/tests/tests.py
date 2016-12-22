@@ -1,123 +1,121 @@
-import unittest
+import pytest
 import transaction
 
 from pyramid import testing
 
-import pytest
+from ..models import Entry, get_tm_session
+from ..models.meta import Base
+
+import faker
+import datetime
 
 
 @pytest.fixture
-def req():
-    """Set up a request object by instantiating from the DummyRequest class."""
-    the_request = testing.DummyRequest()
-    return the_request
+def configuration():
+    settings = {'sqlalchemy.url': 'sqlite:///:memory:'}
+    config = testing.setUp(settings=settings)
+    config.include('..models')
+    yield config
+    testing.tearDown()
+
+
+@pytest.fixture
+def db_session(configuration, request):
+    """A fixture to create a new session based off of Nick's Expense Tracker"""
+    SessionFactory = configuration.registry['dbsession_factory']
+    session = SessionFactory()
+    engine = session.bind
+    Base.metadata.create_all(engine)
+
+    def teardown():
+        """Allow rollback of session changes."""
+        session.transaction.rollback()
+
+    request.addfinalizer(teardown)
+    return session
+
+
+@pytest.fixture
+def dummy_request(db_session):
+    """Set up a dummy request object by instantiating DummyRequest class."""
+    return testing.DummyRequest(dbsession=db_session)
+
+
+@pytest.fixture
+def add_dummy_model(dummy_request):
+    return dummy_request.dbsession.add_all(ENTRIES)
 
 
 @pytest.fixture
 def testapp():
     """Create an instance of our app for testing."""
     from webtest import TestApp
-    from learning_journal_basic import main
+    from learning_journal import main
     app = main({})
     return TestApp(app)
 
 
-def test_home_page_has_the_right_variable(req):
-    """Test that the home page view returns data."""
-    from .views import list
-    response = list(req)
-    assert "entries" in response
+fake = faker.Faker()
 
 
-def test_home_page_has_iterable(req):
-    from .views import list
-    response = list(req)
-    assert hasattr(response["entries"], "__iter__")
+ENTRIES = [Entry(
+    title=fake.sentence(),
+    creation_date=datetime.datetime.now(),
+    body=fake.text(),
+    ) for i in range(5)]
 
 
-def test_home_page_has_list(testapp):
-    """Test that home page has list of entries rendered."""
-    response = testapp.get("/", status=200)
-    inner_html = response.html
-    assert "Today I learned how to set up a blog." in inner_html.find("body").text
+# =========== UNIT TESTS =========== #
+"""Testing that model is creating Entry class objects and pushing to db."""
+def test_new_entries_are_added(db_session):
+    """Test that new entries are added to the database."""
+    db_session.add_all(ENTRIES)
+    query = db_session.query(Entry).all()
+    assert len(query) == len(ENTRIES)
 
 
-def test_detail_page_has_detail(testapp):
-    """Test that detail page has list of entry rendered."""
-    response = testapp.get("/journal/3", status=200)
-    inner_html = response.html
-    assert "Now time for some pirate ipsum." in inner_html.find("body").text
+def test_list_view_returns_correct_number_of_entries(dummy_request, add_dummy_model):
+    """Test that list view has db entries on it."""
+    from ..views.default import my_view
+    result = my_view(dummy_request)
+    assert len(result["entries"]) == 5
+
+# =========== FUNCTIONAL TESTS =========== #
+
+@pytest.fixture
+def testapp():
+    """Create a session."""
+    from webtest import TestApp
+    from learning_journal import main
+
+    app = main({}, **{"sqlalchemy.url": 'sqlite:///:memory:'})
+    testapp = TestApp(app)
+
+    SessionFactory = app.registry["dbsession_factory"]
+    engine = SessionFactory().bind
+    Base.metadata.create_all(bind=engine)
+
+    return testapp
 
 
-def test_create_page_has_data(testapp):
-    """Test that detail page has data."""
-    response = testapp.get("/journal/new-entry", status=200)
-    inner_html = response.html
-    assert "Create a Post" in inner_html.find("main").text
+@pytest.fixture
+def fill_the_db(testapp):
+    """Fill the session DB with the ENTRIES created above."""
+    SessionFactory = testapp.app.registry["dbsession_factory"]
+    with transaction.manager:
+        dbsession = get_tm_session(SessionFactory, transaction.manager)
+        dbsession.add_all(ENTRIES)
 
 
-def test_edit_page_has_data(testapp):
-    """Test that the edit page has data."""
-    response = testapp.get("/journal/2/edit-entry")
-    inner_html = response.html
-    assert "Title:" in inner_html.find("article").text
-
-# def dummy_request(dbsession):
-#     return testing.DummyRequest(dbsession=dbsession)
+def test_create_view_has_form(testapp):
+    """Test that the edit view has a form on it."""
+    response = testapp.get('/journal/new-entry', status=200)
+    html = response.html
+    assert len(html.find_all("form")) == 1
 
 
-# class BaseTest(unittest.TestCase):
-#     def setUp(self):
-#         self.config = testing.setUp(settings={
-#             'sqlalchemy.url': 'sqlite:///:memory:'
-#         })
-#         self.config.include('.models')
-#         settings = self.config.get_settings()
-
-#         from .models import (
-#             get_engine,
-#             get_session_factory,
-#             get_tm_session,
-#             )
-
-#         self.engine = get_engine(settings)
-#         session_factory = get_session_factory(self.engine)
-
-#         self.session = get_tm_session(session_factory, transaction.manager)
-
-#     def init_database(self):
-#         from .models.meta import Base
-#         Base.metadata.create_all(self.engine)
-
-#     def tearDown(self):
-#         from .models.meta import Base
-
-#         testing.tearDown()
-#         transaction.abort()
-#         Base.metadata.drop_all(self.engine)
-
-
-# class TestMyViewSuccessCondition(BaseTest):
-
-#     def setUp(self):
-#         super(TestMyViewSuccessCondition, self).setUp()
-#         self.init_database()
-
-#         from .models import Entry
-
-#         model = Entry(name='one', value=55)
-#         self.session.add(model)
-
-#     def test_passing_view(self):
-#         from .views.default import my_view
-#         info = my_view(dummy_request(self.session))
-#         self.assertEqual(info['one'].name, 'one')
-#         self.assertEqual(info['project'], 'learning_journal')
-
-
-# class TestMyViewFailureCondition(BaseTest):
-
-#     def test_failing_view(self):
-#         from .views.default import my_view
-#         info = my_view(dummy_request(self.session))
-#         self.assertEqual(info.status_int, 500)
+def test_edit_view_has_form(testapp):
+    """Test that the edit view has a form on it."""
+    response = testapp.get('/journal/3/edit-entry', status=200)
+    html = response.html
+    assert len(html.find_all("form")) == 1
