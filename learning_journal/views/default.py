@@ -32,7 +32,7 @@ def detail_view(request):
     try:
         query = request.dbsession.query(Entry)
         the_id = int(request.matchdict["id"])
-        entry = query.filter(Entry.id == the_id)
+        entry = query.all()[the_id]
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
     return {'entry': entry, 'project': 'learning_journal'}
