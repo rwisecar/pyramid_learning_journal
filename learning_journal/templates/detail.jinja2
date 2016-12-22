@@ -3,11 +3,10 @@
         <main>
             <article class="post">
                 <h3>{{ entry.title }}</h3>
-                    <h4>{{ entry.creation_date }}</h4>
                     <p>{{ entry.body }}</p>
             </article>
             <section>
-                <a class="edit" href={{ request.route_url('edit', id=id) }}>Edit Post</a>
+                <a class="edit" href={{ request.route_url('edit', id=entry.id) }}>Edit Post</a>
             </section>
         </main>
     {% endblock %}

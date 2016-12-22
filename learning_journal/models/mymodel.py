@@ -1,5 +1,8 @@
+import datetime
+
 from sqlalchemy import (
     Column,
+    DateTime,
     Index,
     Integer,
     Unicode,
@@ -8,11 +11,12 @@ from sqlalchemy import (
 from .meta import Base
 
 
-class MyModel(Base):
-    __tablename__ = 'models'
+class Entry(Base):
+    __tablename__ = 'entries'
     id = Column(Integer, primary_key=True)
-    name = Column(Unicode)
-    value = Column(Integer)
+    title = Column(Unicode)
+    # creation_date = Column(DateTime, default=datetime.date)
+    body = Column(Unicode)
 
 
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+Index('my_index', Entry.title, unique=True, mysql_length=255)
