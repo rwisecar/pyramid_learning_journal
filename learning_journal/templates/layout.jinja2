@@ -1,0 +1,25 @@
+<!--DOCTYPE html-->
+
+<html>
+    <head>
+        <title>Rachael Wisecarver</title>
+        <link rel="stylesheet" href={{ request.static_path('lj:static/css/base.css')}}>
+    </head>
+    <body>
+        <header>
+            <h1><a href={{ request.route_url('list') }}>Rachael Wisecarver</a></h1>
+            <nav>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href={{ request.route_url('create') }}>New Post</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                </ul>
+            </nav>
+        </header>
+        {% block body %}
+        {% endblock %}
+        <footer>
+            <p class="footer">&#169 2016 Rachael Wisecarver</p>
+        </footer>
+    </body>
+</html>

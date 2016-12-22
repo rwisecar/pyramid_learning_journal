@@ -1,0 +1,236 @@
+/* CSS to remove default browser styling */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+        display: block;
+}
+
+* {
+        background-color: white;
+        color: #2c2f33;
+}
+
+body {
+        line-height: 1;
+        position: relative;
+        /*margin: 30px;*/
+}
+
+ol, ul {
+        list-style: none;
+}
+
+a {
+        text-decoration: none
+}
+
+a:hover {
+        color: #5b677a;
+}
+
+blockquote, q {
+        quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+        content: '';
+        content: none;
+}
+
+table {
+        border-collapse: collapse;
+        border-spacing: 0;
+}
+
+nav {
+        margin: 5%;
+        text-align: center;
+}
+
+nav ul li{
+        margin: 30px;
+        text-align: center;
+        font-size: 18px;
+        font-family: "Futura";
+        display: inline;
+}
+
+.post img {
+        margin: 30 0;
+        width: 100%;
+}
+
+main {
+        width: 900px;
+        position: relative;
+        margin: 30px auto;
+}
+
+h1, h2, h3, h4{
+        font-family: "Futura";
+        margin: 30 0;
+        text-align: center;
+}
+
+h1 {
+        font-size: 80px;
+        letter-spacing: 5px;
+}
+
+h3{
+        font-size: 26px;
+}
+
+p {
+        font-family: "Museo Slab";
+        font-size: 16px;
+}
+
+article {
+        margin: 30px;
+}
+
+.post h3, h4 {
+        margin: 30 0 15 0;
+        text-align: center;
+}
+
+.post p {
+        text-align: left;
+}
+
+.edit {
+        margin: 30px;
+        text-align: center;
+        font-size: 18px;
+        font-family: "Futura";
+        display: inline;
+}
+#about{
+        text-align: center;
+}
+
+#about img{
+        border-radius: 50%;
+        margin: 30 auto;
+        height: 35%;
+}
+
+#about p {
+        text-align: left;
+}
+
+form {
+        margin: 0 auto;
+        text-align: center;
+}
+
+.btn {
+        background-color: #4b5c77;
+        color: white;
+        border: 0px;
+        border-radius: 5%;
+        margin-top: 30px;
+        width: 10%;
+        height: 5%;
+        font-family: "Futura";
+        font-size: 16px;
+}
+
+.btn:hover{
+        background-color: #8f99aa;
+        color: #2c2f33;
+}
+
+footer {
+        position: absolute;
+        margin: 30px auto;
+}
+
+footer p {
+        font-family: Futura;
+        font-size: 12px;
+}
+
+@media only screen and (max-width: 750px){
+
+    main {
+        margin: 3%;
+        float: left;
+        max-width: 95%;
+        height: 100%;
+        position: relative;
+        margin-bottom: 10%;
+    }
+
+    nav ul li {
+        display: block;
+    }
+
+    #header {
+        max-width: 200%;
+    }
+
+    h1 {
+        font-size: 70px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: 1.5;
+    }
+
+    .create {
+        position: relative;
+    }
+
+    form {
+        width: 30%;
+        height: 100%;
+    }
+
+    .blogpost {
+        position: absolute;
+        margin: 0 auto;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 400px;
+    }
+
+    .btn {
+        position: absolute;
+        top: 70%;
+        left: 35%;
+        width: 30%;
+        height: 5%;
+    }
+
+    footer {
+/*        position: absolute;
+        bottom: 0;*/
+        display: none;
+    }
+
+}

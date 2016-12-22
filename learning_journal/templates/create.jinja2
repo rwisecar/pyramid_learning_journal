@@ -1,0 +1,14 @@
+{% extends "layout.jinja2" %}
+    {% block body %}
+        <main>
+            <h3>Create a Post</h3>
+            <article class="create">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <textarea class="blogpost" name="post" cols="80" rows="20"></textarea>
+                    <br>
+                    <br>
+                    <input class="btn" type="submit" value="Submit">
+                </form>
+            </article>
+        </main>
+    {% endblock %}
