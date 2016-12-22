@@ -96,3 +96,15 @@ bin/
 pip-selfcheck.json
 pyvenv.cfg
 share/
+
+
+#Miscellaneous
+* .sqlite
+
+
+
+
+
+
+
+
