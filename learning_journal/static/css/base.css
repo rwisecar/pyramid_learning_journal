@@ -148,6 +148,11 @@ form {
         text-align: center;
 }
 
+.blogpost {
+        width: 300px;
+
+}
+
 .btn {
         background-color: #4b5c77;
         color: white;
