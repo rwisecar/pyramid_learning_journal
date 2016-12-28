@@ -19,6 +19,8 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'faker',
+    'psycopg2'
     ]
 
 tests_require = [
@@ -38,8 +40,8 @@ setup(name='learning_journal',
           "Topic :: Internet :: WWW/HTTP",
           "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
       ],
-      author='',
-      author_email='',
+      author='Rachael Wisecarver',
+      author_email='rachael.wisecarver@gmail.com',
       url='',
       keywords='web wsgi bfg pylons pyramid',
       packages=find_packages(),
