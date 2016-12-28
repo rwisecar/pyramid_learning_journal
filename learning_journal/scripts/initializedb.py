@@ -42,6 +42,7 @@ def main(argv=sys.argv):
     session_factory = get_session_factory(engine)
 
     with transaction.manager:
+        settings["sqlalchemy.url"] = os.environ["DATABASE_URL"]
         dbsession = get_tm_session(session_factory, transaction.manager)
 
         entries = [
