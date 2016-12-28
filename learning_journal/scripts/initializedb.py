@@ -3,6 +3,8 @@ import sys
 import transaction
 import datetime
 
+from sqlalchemy import engine_from_config
+
 from pyramid.paster import (
     get_appsettings,
     setup_logging,
@@ -35,9 +37,9 @@ def main(argv=sys.argv):
     settings = get_appsettings(config_uri, options=options)
     if 'DATABASE_URL' in os.environ:
         settings["sqlalchemy.url"] = os.environ["DATABASE_URL"]
-    engine = get_engine(settings)
+    engine = engine_from_config(settings, 'sqlalchemy.')
 
-    Base.metadata.drop_all(engine)
+    # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
     session_factory = get_session_factory(engine)
