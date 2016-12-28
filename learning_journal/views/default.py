@@ -20,8 +20,7 @@ def my_view(request):
 def detail_view(request):
     try:
         query = request.dbsession.query(Entry)
-        the_id = int(request.matchdict["id"])
-        entry = query[the_id]
+        entry = query.filter(Entry.id == request.matchdict["id"]).first()
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
     return {'entry': entry}
@@ -32,11 +31,12 @@ def create_view(request):
     if request.method == "POST":
         new_title = request.POST["title"]
         new_post = request.POST["post"]
-        new_date = datetime.datetime.now()
-        new_model = Entry(title=new_title, body=new_post, creation_date=new_date)
+        new_model = Entry(title=new_title,
+                          body=new_post,
+                          creation_date=datetime.datetime.now())
         request.dbsession.add(new_model)
         return HTTPFound(location=request.route_url('list'))
-    return {"data": {"title": "post"}, "creation_date": "creation_date"}
+    return {}
 
 
 @view_config(route_name='edit', renderer='../templates/edit.jinja2')
@@ -46,18 +46,18 @@ def edit_view(request):
             new_title = request.POST["title"]
             new_post = request.POST["post"]
             query = request.dbsession.query(Entry)
-            post_dict = query.filter(Entry.id == request.matchdict["id"])
-            post_dict.update({"title": new_title,
-                              "body": new_post,
-                              "creation_date": datetime.datetime.now()})
+            entry = query.filter(Entry.id == request.matchdict["id"])
+            entry.update({"title": new_title,
+                          "body": new_post,
+                          "creation_date": datetime.datetime.now()})
             return HTTPFound(location=request.route_url('list'))
         except DBAPIError:
             return Response(db_err_msg, content_type='text/plain', status=500)
     query = request.dbsession.query(Entry)
-    post_dict = query.filter(Entry.id == request.matchdict["id"]).first()
-    new = {"title": post_dict.title,
-           "creation_date": post_dict.creation_date,
-           "body": post_dict.body}
+    entry = query.filter(Entry.id == request.matchdict["id"]).first()
+    new = {"title": entry.title,
+           "creation_date": entry.creation_date,
+           "body": entry.body}
     return {"entry": new}
 
 
