@@ -19,4 +19,4 @@ class Entry(Base):
     body = Column(Unicode)
 
 
-Index('my_index', Entry.title, unique=True, mysql_length=255)
+# Index('my_index', Entry.title, unique=True, mysql_length=255)

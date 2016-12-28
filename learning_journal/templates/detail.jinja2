@@ -6,7 +6,7 @@
                     <p>{{ entry.body }}</p>
             </article>
             <section>
-                <a class="edit" href={{ request.route_url('edit', id=entry.id - 1) }}>Edit Post</a>
+                <a class="edit" href={{ request.route_url('edit', id=entry.id) }}>Edit Post</a>
             </section>
         </main>
     {% endblock %}
