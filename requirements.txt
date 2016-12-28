@@ -13,6 +13,8 @@ ipaddress==1.0.17
 ipython==5.1.0
 ipython-genutils==0.1.0
 Jinja2==2.8
+-e git+https://github.com/rwisecar/pyramid_learning_journal.git@53d3c4c802a7cd03ef0059176efb05fc11348eef#egg=learning_journal
+-e git+https://github.com/rwisecar/learning_journal_basic.git@9cb355f10cacd705e7b09a64ad1773a38c303d31#egg=learning_journal_basic
 Mako==1.0.6
 MarkupSafe==0.23
 PasteDeploy==1.5.2
