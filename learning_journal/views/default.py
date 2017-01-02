@@ -100,10 +100,11 @@ def logout_view(request):
     return HTTPFound(location=request.route_url("list"), headers=auth_head)
 
 
-@forbidden_view_config(route_name='forbidden', renderer='../templates/forbidden.jinja2')
+@forbidden_view_config()
 def forbidden_view(request):
     """Control view on 403 error."""
-    return HTTPFound(location=request.route_url("forbidden"))
+    # route_name='forbidden', renderer='../templates/forbidden.jinja2'
+    return HTTPFound(location=request.route_url("login"))
 
 
 db_err_msg = """\
