@@ -13,6 +13,11 @@
                     <li><a href={{ request.route_url('about') }}>About</a></li>
                     <li><a href={{ request.route_url('create') }}>New Post</a></li>
                     <li><a href={{ request.route_url('portfolio') }}>Portfolio</a></li>
+                    {% if not request.authenticated_userid %}
+                        <li><a href={{ request.route_url('login') }}>Login</a></li>
+                    {% else %}
+                        <li><a href={{ request.route_url('logout') }}>Log Out</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </header>

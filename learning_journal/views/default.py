@@ -1,9 +1,11 @@
 from pyramid.response import Response
-from pyramid.view import view_config
+from pyramid.view import view_config, forbidden_view_config
 from pyramid.httpexceptions import HTTPFound
+from pyramid.security import remember, forget
 from sqlalchemy.exc import DBAPIError
 
 from ..models import Entry
+from ..security import check_credentials
 import datetime
 
 
@@ -26,7 +28,11 @@ def detail_view(request):
     return {'entry': entry}
 
 
-@view_config(route_name='create', renderer='../templates/create.jinja2')
+@view_config(
+    route_name='create',
+    renderer='../templates/create.jinja2',
+    permission="add"
+    )
 def create_view(request):
     if request.method == "POST":
         new_title = request.POST["title"]
@@ -39,7 +45,10 @@ def create_view(request):
     return {}
 
 
-@view_config(route_name='edit', renderer='../templates/edit.jinja2')
+@view_config(
+    route_name='edit',
+    renderer='../templates/edit.jinja2',
+    permission="add")
 def edit_view(request):
     if request.method == "POST":
         try:
@@ -69,6 +78,33 @@ def about_view(request):
 @view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2')
 def portfolio_view(request):
     return {}
+
+
+@view_config(route_name='login', renderer='../templates/login.jinja2')
+def login_view(request):
+    if request.POST:
+        username = request.POST["username"]
+        password = request.POST["password"]
+        if check_credentials(username, password):
+            auth_head = remember(request, username)
+            return HTTPFound(
+                location=request.route_url("list"),
+                headers=auth_head
+            )
+    return {}
+
+
+@view_config(route_name="logout")
+def logout_view(request):
+    auth_head = forget(request)
+    return HTTPFound(location=request.route_url("list"), headers=auth_head)
+
+
+@forbidden_view_config()
+def forbidden_view(request):
+    """Control view on 403 error."""
+    # route_name='forbidden', renderer='../templates/forbidden.jinja2'
+    return HTTPFound(location=request.route_url("login"))
 
 
 db_err_msg = """\
