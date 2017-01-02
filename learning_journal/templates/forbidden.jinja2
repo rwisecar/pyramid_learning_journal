@@ -1,0 +1,6 @@
+{% extends "layout.jinja2" %}
+
+{% block body %}
+    <h1> Forbidden </h1>
+    <p> You do not have access for this page. Please <a href={{ request.route_url('login') }}> Login. </a></p>
+{% endblock %}

@@ -10,3 +10,6 @@ def includeme(config):
     config.add_route("edit", "/journal/{id:\d+}/edit-entry")
     config.add_route("about", "/about")
     config.add_route("portfolio", "/portfolio")
+    config.add_route("login", "/login")
+    config.add_route("logout", "/logout")
+    config.add_route("forbidden", "/journal/{id:\d+}/forbidden")
