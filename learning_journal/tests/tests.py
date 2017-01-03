@@ -93,6 +93,7 @@ def testapp():
 
     SessionFactory = app.registry["dbsession_factory"]
     engine = SessionFactory().bind
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
     return testapp
