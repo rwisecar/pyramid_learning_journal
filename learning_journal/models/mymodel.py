@@ -18,5 +18,11 @@ class Entry(Base):
     creation_date = Column(Date)
     body = Column(Unicode)
 
-
-# Index('my_index', Entry.title, unique=True, mysql_length=255)
+    def to_json(self):
+        """Return string representation of database entries."""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "creation_date": self.creation_date.strftime("%M %d %Y"),
+            "body": self.body,
+        }
