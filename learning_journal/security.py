@@ -1,8 +1,10 @@
 import os
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.security import Everyone, Authenticated, Allow
+from pyramid.security import Authenticated, Allow
+from pyramid.session import SignedCookieSessionFactory
 from passlib.apps import custom_app_context as pwd_context
+
 
 
 class MyRoot(object):
@@ -26,7 +28,7 @@ def check_credentials(username, password):
 
 def includeme(config):
     """Establish Pyramid security configuration."""
-    auth_secret = os.environ.get("AUTH_SECRET", "itsasecret")
+    auth_secret = os.environ["AUTH_SECRET"]
     authn_policy = AuthTktAuthenticationPolicy(
         secret=auth_secret,
         hashalg="sha512"
@@ -35,3 +37,9 @@ def includeme(config):
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
     config.set_root_factory(MyRoot)
+
+    # Session stuff for CSRF Protection
+    session_secret = os.environ.get("SESSION_SECRET", "itsasecret")
+    session_factory = SignedCookieSessionFactory(session_secret)
+    config.set_session_factory(session_factory)
+    config.set_default_csrf_options(require_csrf=True)
