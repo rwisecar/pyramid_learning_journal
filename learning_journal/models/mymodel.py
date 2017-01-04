@@ -23,6 +23,6 @@ class Entry(Base):
         return {
             "id": self.id,
             "title": self.title,
-            "creation_date": self.creation_date.strftime("%M %d %Y"),
+            "creation_date": self.creation_date.strftime("%M %d, %Y"),
             "body": self.body,
         }

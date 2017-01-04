@@ -127,8 +127,9 @@ article {
         text-align: center;
         font-size: 18px;
         font-family: "Futura";
-        display: inline;
+        display: block;
 }
+
 #about{
         text-align: center;
 }

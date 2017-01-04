@@ -92,12 +92,15 @@ def portfolio_view(request):
     return {}
 
 
-@view_config(route_name="delete", permission="delete")
+@view_config(route_name="delete", permission="delete", require_csrf=False)
 def delete_view(request):
-    """To delete individual items."""
-    entry = request.dbsession.query(Entry).get(request.matchdict["id"])
-    request.dbsession.delete(entry)
-    return HTTPFound(request.route_url("list"))
+    """Delete individual entries."""
+    try:
+        entry = request.dbsession.query(Entry).get(request.matchdict["id"])
+        request.dbsession.delete(entry)
+        return HTTPFound(request.route_url("list"))
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 @view_config(
@@ -105,6 +108,7 @@ def delete_view(request):
     renderer='../templates/login.jinja2',
     require_csrf=False)
 def login_view(request):
+    """Enable user login."""
     if request.POST:
         username = request.POST["username"]
         password = request.POST["password"]
@@ -119,6 +123,7 @@ def login_view(request):
 
 @view_config(route_name="logout", require_csrf=False)
 def logout_view(request):
+    """Enable user logout."""
     auth_head = forget(request)
     return HTTPFound(location=request.route_url("list"), headers=auth_head)
 
