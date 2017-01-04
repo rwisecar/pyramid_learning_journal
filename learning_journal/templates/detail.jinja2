@@ -6,7 +6,9 @@
                     <p>{{ entry.body }}</p>
             </article>
             <section>
+            {% if request.authenticated_userid %}
                 <a class="edit" href={{ request.route_url('edit', id=entry.id) }}>Edit Post</a>
+            {% endif %}
             </section>
         </main>
     {% endblock %}

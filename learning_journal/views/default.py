@@ -9,7 +9,7 @@ from ..security import check_credentials
 import datetime
 
 
-@view_config(route_name='list', renderer='../templates/list.jinja2')
+@view_config(route_name='list', renderer='../templates/list.jinja2', require_csrf=False)
 def my_view(request):
     try:
         entries = request.dbsession.query(Entry).all()
@@ -18,7 +18,7 @@ def my_view(request):
     return {'entries': entries}
 
 
-@view_config(route_name='detail', renderer='../templates/detail.jinja2')
+@view_config(route_name='detail', renderer='../templates/detail.jinja2', require_csrf=False)
 def detail_view(request):
     try:
         query = request.dbsession.query(Entry)
@@ -70,17 +70,26 @@ def edit_view(request):
     return {"entry": new}
 
 
-@view_config(route_name='about', renderer='../templates/about.jinja2')
+@view_config(
+    route_name='about',
+    renderer='../templates/about.jinja2',
+    require_csrf=False)
 def about_view(request):
     return {}
 
 
-@view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2')
+@view_config(
+    route_name='portfolio',
+    renderer='../templates/portfolio.jinja2',
+    require_csrf=False)
 def portfolio_view(request):
     return {}
 
 
-@view_config(route_name='login', renderer='../templates/login.jinja2')
+@view_config(
+    route_name='login',
+    renderer='../templates/login.jinja2',
+    require_csrf=False)
 def login_view(request):
     if request.POST:
         username = request.POST["username"]
@@ -94,7 +103,7 @@ def login_view(request):
     return {}
 
 
-@view_config(route_name="logout")
+@view_config(route_name="logout", require_csrf=False)
 def logout_view(request):
     auth_head = forget(request)
     return HTTPFound(location=request.route_url("list"), headers=auth_head)
