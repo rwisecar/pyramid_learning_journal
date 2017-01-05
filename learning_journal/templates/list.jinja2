@@ -44,7 +44,7 @@
                             <a class="twitter-share-button"
                             href="https://twitter.com/intent/tweet"
                             data-size="large"
-                            data-text="{{ entry.title }}: {{ entry.body | truncate(20) }}""
+                            data-text="{{ entry.title }}: {{ entry.body | truncate(50) }}""
                             data-hashtags="RachaelBlog"
                             data_url={{ request.route_url('detail', id=entry.id) }}>
                             Tweet
