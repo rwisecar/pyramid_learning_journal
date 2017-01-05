@@ -16,6 +16,14 @@ def my_view(request):
         entries = request.dbsession.query(Entry).all()
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
+    if request.method == "POST":
+        new_title = request.POST["title"]
+        new_post = request.POST["post"]
+        new_model = Entry(title=new_title,
+                          body=new_post,
+                          creation_date=datetime.datetime.now())
+        request.dbsession.add(new_model)
+        return HTTPFound(location=request.route_url('list'))
     return {'entries': entries}
 
 

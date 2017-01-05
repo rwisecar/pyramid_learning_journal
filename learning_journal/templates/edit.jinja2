@@ -27,3 +27,7 @@
             </article>
         </main>
     {% endblock %}
+        {% block javascript %}
+    <script type="text/javascript" src="{{ request.static_path('learning_journal:static/app.js') }}">
+    </script>
+    {% endblock %}
