@@ -7,24 +7,39 @@ from ..models import Entry, get_tm_session
 from ..models.meta import Base
 
 import faker
+import random
 import datetime
 
 
-@pytest.fixture
-def configuration():
-    settings = {'sqlalchemy.url': 'sqlite:///:memory:'}
+@pytest.fixture(scope="session")
+def configuration(request):
+    """Set up an instance of the Configurator object.
+    It sets a pointer to the db location.
+    It incorporates models from your app's model package.
+    Then it tears everything down so you don't have weird things persisting
+    beyond the session. This config will persist for the session duration."""
+    settings = {'sqlalchemy.url': 'postgres:///test_lj'}
     config = testing.setUp(settings=settings)
     config.include('..models')
-    yield config
-    testing.tearDown()
+    config.include('..routes')
+
+    def teardown():
+        testing.tearDown()
+
+    request.addfinalizer(teardown)
+    return config
 
 
 @pytest.fixture
 def db_session(configuration, request):
-    """A fixture to create a new session based off of Nick's Expense Tracker"""
+    """Create a new session to interact with the test database.
+    Here, we use the dbsession_factory on the configurator instance to make new
+    db sessions. The dbsession_factory binds the session to an available engine
+    and returns a new session each time the dummy_request object is called."""
     SessionFactory = configuration.registry['dbsession_factory']
     session = SessionFactory()
     engine = session.bind
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
     def teardown():
@@ -37,32 +52,40 @@ def db_session(configuration, request):
 
 @pytest.fixture
 def dummy_request(db_session):
-    """Set up a dummy request object by instantiating DummyRequest class."""
+    """Set up a dummy request object by instantiating DummyRequest class.
+    Scope is function level. Each test will have its own db session."""
     return testing.DummyRequest(dbsession=db_session)
 
 
 @pytest.fixture
 def add_dummy_model(dummy_request):
+    """Add model instances to the database.
+    Scope is session level. 
+    Every test that includes this fixture will add new entries to the db."""
     return dummy_request.dbsession.add_all(ENTRIES)
 
 
-@pytest.fixture
-def testapp():
-    """Create an instance of our app for testing."""
-    from webtest import TestApp
-    from learning_journal import main
-    app = main({})
-    return TestApp(app)
-
-
+# Instantiate faker
 fake = faker.Faker()
 
-
+# Use Faker to create new fake, random entries
 ENTRIES = [Entry(
     title=fake.sentence(),
     creation_date=datetime.datetime.now(),
     body=fake.text(),
     ) for i in range(5)]
+
+
+@pytest.fixture
+def set_auth_credentials():
+    """Make a username/pw combo for testing purposes."""
+    import os
+    from passlib.apps import custom_app_context as pwd_context
+
+    os.environ["AUTH_USERNAME"] = "testme"
+    os.environ["AUTH_PASSWORD"] = pwd_context.hash("secrettime")
+
+
 
 
 # =========== UNIT TESTS =========== #
