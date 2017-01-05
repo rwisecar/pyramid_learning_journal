@@ -42,11 +42,11 @@ def main(argv=sys.argv):
 
     session_factory = get_session_factory(engine)
 
-    # with transaction.manager:
-    #     dbsession = get_tm_session(session_factory, transaction.manager)
+    with transaction.manager:
+        dbsession = get_tm_session(session_factory, transaction.manager)
 
-    #     entries = [
-    #         Entry(title="Learning Journal | Day 1", creation_date=datetime.datetime.now(), body="Sample body text."),
-    #     ]
+        entries = [
+            Entry(title="Learning Journal | Day 1", creation_date=datetime.datetime.now(), body="Sample body text."),
+        ]
 
-    #     dbsession.add_all(entries)
+        dbsession.add_all(entries)

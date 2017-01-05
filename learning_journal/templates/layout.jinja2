@@ -4,6 +4,7 @@
     <head>
         <title>Rachael Wisecarver</title>
         <link rel="stylesheet" href={{ request.static_path('learning_journal:static/css/base.css')}}>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
     </head>
     <body>
         <header>
@@ -26,5 +27,7 @@
         <footer>
             <p class="footer">&#169 2016 Rachael Wisecarver</p>
         </footer>
+        {% block javascript %}
+        {% endblock %}
     </body>
 </html>

@@ -14,6 +14,7 @@ class MyRoot(object):
 
     __acl__ = [
         (Allow, Authenticated, "add"),
+        (Allow, Authenticated, "delete")
     ]
 
 

@@ -122,13 +122,20 @@ article {
         text-align: left;
 }
 
+.post .home_form p{
+        display: inline-block;
+        text-align: right;
+        float: right;
+}
+
 .edit {
         margin: 30px;
         text-align: center;
         font-size: 18px;
         font-family: "Futura";
-        display: inline;
+        display: block;
 }
+
 #about{
         text-align: center;
 }

@@ -4,6 +4,31 @@
     <img id="header" src={{ request.static_path('learning_journal:static/images/Bookshelf.jpg') }}>
     <main>
         <article class="post">
+            {% if request.authenticated_userid %}
+                <h3>Create a Post</h3>
+                <article class="create">
+                <form method="POST" action="" name="home_form" class="home_form" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}"/>
+                    <p>
+                        <label for="title">Title</label>
+                        <br>
+                        <br>
+                        <input type=text, name="title" required/>
+                    </p>
+                    <br>
+                    <br>
+                    <p>
+                        <label for="value">Post</label>
+                        <br>
+                        <br>
+                        <textarea name="post" rows="20" cols="80" class="blogpost"></textarea>
+                        <br>
+                        <br>
+                        <input class="btn createit" type="submit" value="Submit">
+                    </p>
+                </form>
+                </article>
+            {% endif %}
             <ul>
                 {% if entries %}
                     {% for entry in entries %}
@@ -13,6 +38,20 @@
                                 <h4>{{ entry.creation_date.strftime("%b %d, %Y") }}</h4>
                             {% endif %}
                             <p>{{ entry.body| truncate(500) }}</p>
+                            <br>
+                            <br>
+                            <br>
+                            <a class="twitter-share-button"
+                            href="https://twitter.com/intent/tweet"
+                            data-size="large"
+                            data-text="{{ entry.title }}: {{ entry.body | truncate(20) }}""
+                            data-hashtags="RachaelBlog"
+                            data_url={{ request.route_url('detail', id=entry.id) }}>
+                            Tweet
+                            </a>
+                            <br>
+                            <br>
+                            <br>
                         </li>
                     {% endfor %}
                 {% endif %}
@@ -20,4 +59,9 @@
             </ul>    
         </article>
     </main>
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript" src="{{ request.static_path('learning_journal:static/app.js') }}">
+</script>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 {% endblock %}

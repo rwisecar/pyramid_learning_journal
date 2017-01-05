@@ -11,15 +11,25 @@ import datetime
 
 @view_config(route_name='list', renderer='../templates/list.jinja2', require_csrf=False)
 def my_view(request):
+    """Show list view of all entries."""
     try:
         entries = request.dbsession.query(Entry).all()
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
+    if request.method == "POST":
+        new_title = request.POST["title"]
+        new_post = request.POST["post"]
+        new_model = Entry(title=new_title,
+                          body=new_post,
+                          creation_date=datetime.datetime.now())
+        request.dbsession.add(new_model)
+        return HTTPFound(location=request.route_url('list'))
     return {'entries': entries}
 
 
 @view_config(route_name='detail', renderer='../templates/detail.jinja2', require_csrf=False)
 def detail_view(request):
+    """Show detail view for selected entry."""
     try:
         query = request.dbsession.query(Entry)
         entry = query.filter(Entry.id == request.matchdict["id"]).first()
@@ -34,6 +44,7 @@ def detail_view(request):
     permission="add"
     )
 def create_view(request):
+    """Show and enable create page for selected entry."""
     if request.method == "POST":
         new_title = request.POST["title"]
         new_post = request.POST["post"]
@@ -50,6 +61,7 @@ def create_view(request):
     renderer='../templates/edit.jinja2',
     permission="add")
 def edit_view(request):
+    """Show and enable edit page for selected entry."""
     if request.method == "POST":
         try:
             new_title = request.POST["title"]
@@ -75,6 +87,7 @@ def edit_view(request):
     renderer='../templates/about.jinja2',
     require_csrf=False)
 def about_view(request):
+    """Show about page."""
     return {}
 
 
@@ -83,7 +96,19 @@ def about_view(request):
     renderer='../templates/portfolio.jinja2',
     require_csrf=False)
 def portfolio_view(request):
+    """Show portfolio page."""
     return {}
+
+
+@view_config(route_name="delete", permission="delete", require_csrf=False)
+def delete_view(request):
+    """Delete individual entries."""
+    try:
+        entry = request.dbsession.query(Entry).get(request.matchdict["id"])
+        request.dbsession.delete(entry)
+        return HTTPFound(request.route_url("list"))
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 @view_config(
@@ -91,6 +116,7 @@ def portfolio_view(request):
     renderer='../templates/login.jinja2',
     require_csrf=False)
 def login_view(request):
+    """Enable user login."""
     if request.POST:
         username = request.POST["username"]
         password = request.POST["password"]
@@ -105,6 +131,7 @@ def login_view(request):
 
 @view_config(route_name="logout", require_csrf=False)
 def logout_view(request):
+    """Enable user logout."""
     auth_head = forget(request)
     return HTTPFound(location=request.route_url("list"), headers=auth_head)
 
@@ -112,8 +139,15 @@ def logout_view(request):
 @forbidden_view_config()
 def forbidden_view(request):
     """Control view on 403 error."""
-    # route_name='forbidden', renderer='../templates/forbidden.jinja2'
     return HTTPFound(location=request.route_url("login"))
+
+
+@view_config(route_name="api_list", renderer="json")
+def api_list_view(request):
+    """Return a list of blog entries in json format."""
+    entries = request.dbsession.query(Entry).all()
+    output = [entry.to_json() for entry in entries]
+    return output
 
 
 db_err_msg = """\
