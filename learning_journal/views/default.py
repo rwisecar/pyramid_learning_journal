@@ -30,11 +30,9 @@ def my_view(request):
 @view_config(route_name='detail', renderer='../templates/detail.jinja2', require_csrf=False)
 def detail_view(request):
     """Show detail view for selected entry."""
-    try:
-        query = request.dbsession.query(Entry)
-        entry = query.filter(Entry.id == request.matchdict["id"]).first()
-    except DBAPIError:
-        return Response(db_err_msg, content_type='text/plain', status=500)
+    entry = request.dbsession.query(Entry).get(int(request.matchdict["id"]))
+    if not entry:
+        return Response("Not Found", content_type='text/plain', status=404)
     return {'entry': entry}
 
 
