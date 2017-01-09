@@ -9,13 +9,13 @@ from ..security import check_credentials
 import datetime
 
 
-@view_config(route_name='list', renderer='../templates/list.jinja2', require_csrf=False)
+@view_config(
+    route_name='list',
+    renderer='../templates/list.jinja2',
+    require_csrf=False
+    )
 def my_view(request):
     """Show list view of all entries."""
-    try:
-        entries = request.dbsession.query(Entry).all()
-    except DBAPIError:
-        return Response(db_err_msg, content_type='text/plain', status=500)
     if request.method == "POST":
         new_title = request.POST["title"]
         new_post = request.POST["post"]
@@ -23,7 +23,10 @@ def my_view(request):
                           body=new_post,
                           creation_date=datetime.datetime.now())
         request.dbsession.add(new_model)
-        return HTTPFound(location=request.route_url('list'))
+    try:
+        entries = request.dbsession.query(Entry).all()
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
     return {'entries': entries}
 
 

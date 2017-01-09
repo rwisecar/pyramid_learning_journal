@@ -13,12 +13,30 @@ $(document).ready(function(){
 
 // AJAX to enable asynchronous reload for create form
 $(document).ready(function(){
-    $('form[name=home_form]').submit(function(){
+    var csrfToken = "{{ request.session.get_csrf_token() }}";
+    $('.home_form').submit(function(e){
+        e.preventDefault();
         $.post({
-            url: '/journal/new-entry',
-            data: $('form[name=home_form]').serialize(),
+            headers: { 'X-CSRF-Token': csrfToken },
+            url: 'create',
+            data: {"title": $('#title').val(), "post": $('#post').val()},
             success: function(){
-                console.log("new entry created");
+                var creation_date = new Date();
+                var year = creation_date.getFullYear();
+                var month = creation_date.getMonth() + 1;
+                if (month.toString().length == 1) {
+                    month = "0" + month;
+                };
+                var day = creation_date.getDate();
+                if (day.toString().length == 1){
+                    day = "0" + day;
+                };
+
+                $('#entry_title').append($('#title').val());
+                $('#entry_date').append($('creation_date'));
+                $('#entry_text').append($('#post').val());
+                $('#title').val("");
+                $('#entry').val("");
             }
         });
     });

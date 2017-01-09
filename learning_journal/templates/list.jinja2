@@ -13,7 +13,7 @@
                         <label for="title">Title</label>
                         <br>
                         <br>
-                        <input type=text, name="title" required/>
+                        <input type=text, id="title" required/>
                     </p>
                     <br>
                     <br>
@@ -21,10 +21,10 @@
                         <label for="value">Post</label>
                         <br>
                         <br>
-                        <textarea name="post" rows="20" cols="80" class="blogpost"></textarea>
+                        <textarea id="post" rows="20" cols="80" class="blogpost"></textarea>
                         <br>
                         <br>
-                        <input class="btn createit" type="submit" value="Submit">
+                        <input class="btn" type="submit" value="Submit">
                     </p>
                 </form>
                 </article>
@@ -33,11 +33,11 @@
                 {% if entries %}
                     {% for entry in entries %}
                         <li>
-                            <h3><a href={{ request.route_url('detail', id=entry.id) }}>{{ entry.title }}</a></h3>
+                            <h3 id="entry_title"><a href={{ request.route_url('detail', id=entry.id) }}>{{ entry.title }}</a></h3>
                             {% if entry.creation_date %}
-                                <h4>{{ entry.creation_date.strftime("%b %d, %Y") }}</h4>
+                                <h4 id="entry_date">{{ entry.creation_date.strftime("%b %d, %Y") }}</h4>
                             {% endif %}
-                            <p>{{ entry.body| truncate(500) }}</p>
+                            <p id="entry_text">{{ entry.body| truncate(500) }}</p>
                             <br>
                             <br>
                             <br>
